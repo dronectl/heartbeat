@@ -35,6 +35,11 @@ message(STATUS "Linking OpenOCD configuration.")
 get_filename_component(OPENOCD_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/tools/stlink.cfg ABSOLUTE)
 
 set(
+  HEARTBEAT_INCLUDE
+  include
+)
+
+set(
   STM32CUBEG4_INCLUDE
   ${STM32CUBEG4_BASE}/Drivers/CMSIS/Device/ST/STM32G4xx/Include
   ${STM32CUBEG4_BASE}/Drivers/CMSIS/Core/Include
@@ -55,11 +60,13 @@ find_program(OPENOCD NAMES openocd${TOOLCHAIN_EXT} PATHS ${TOOLCHAIN_DIR} NO_DEF
 add_executable(
   ${EXECUTABLE}
   src/main.c
+  src/pid.c
   src/system_stm32g4xx.c
   src/startup_stm32g431xx.s
 )
 set_target_properties(${EXECUTABLE} PROPERTIES OUTPUT_NAME ${EXECUTABLE}.elf)
 target_include_directories(${EXECUTABLE} PUBLIC ${STM32CUBEG4_INCLUDE})
+target_include_directories(${EXECUTABLE} PUBLIC ${HEARTBEAT_INCLUDE})
 target_compile_definitions(${EXECUTABLE} PRIVATE ${STM32G431XX_COMPILE_DEFINITIONS})
 target_compile_options(${EXECUTABLE} PRIVATE ${STM32G431XX_C_FLAGS})
 target_link_options(${EXECUTABLE} PRIVATE ${STM32G431XX_LINKER_FLAGS})
